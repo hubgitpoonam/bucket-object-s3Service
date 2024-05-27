@@ -36,7 +36,7 @@ This project is a Node.js application for managing buckets and objects. It allow
     Copy code
     npm start
     or npm run dev
-    The server will start on port 3000. You can access the API endpoints at http://localhost:5000.
+    The server will start on port 5000. You can access the API endpoints at http://localhost:5000.
 
 4. Configuration:
 
