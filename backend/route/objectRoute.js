@@ -1,31 +1,22 @@
 const express = require('express')
 const router = express.Router();
-const multer = require('multer');
+const upload = require('../middleware/multer');
 const path = require('path');
 const fs = require('fs')
-const  generateUniqueId = require('../utils/uniqueId')
-
-const { getObjectById, uploadObject, getAllObjectsInBucket, deleteObjectById } = require('../controller/objectsController');
-// router.get('/getuser',getUser);
-
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      const { bucketId } = req.params;
-      const uploadPath = path.join(__dirname, '../../uploads', bucketId);
-      fs.mkdirSync(uploadPath, { recursive: true });
-      cb(null, uploadPath);
-    },
-    filename: (req, file, cb) => {
-      cb(null, `${generateUniqueId()}-${file.originalname}`);
-    },
-  });
-
-const upload = multer({ storage });
 
 
-router.get('/objects/:objectId',getObjectById);
-router.post('/objects/:bucketId', upload.single('file'), uploadObject);
-router.get('/bucket/:bucketId', getAllObjectsInBucket);
+const { getObjectById,  deleteObjectById, putFile, listObjectsInBucket, streamObjectById, updateFileById } = require('../controller/objectsController');
+const { isAuthenticatedUser } = require('../middleware/auth');
+const { updateBucketById } = require('../controller/bucketsController');
 
-router.delete('/delete/:objectId', deleteObjectById);
+
+
+
+router.put('/buckets/:bucketId/files/:id', upload.single('file'), updateFileById);
+router.get('/objects/:id',streamObjectById);
+router.post('/buckets/:bucketId/file',upload.single('file'), putFile,isAuthenticatedUser);
+
+router.get('/bucket/ojbects/:bucketId', listObjectsInBucket,isAuthenticatedUser);
+
+router.delete('/delete/:id', deleteObjectById);
 module.exports = router;
